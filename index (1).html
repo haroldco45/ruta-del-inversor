@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#11212E">
+<meta name="description" content="Curso personal de trading e inversión: 9 módulos, quizzes, calculadoras y glosario.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<title>Ruta del Inversor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a trail of modules down the left (the "ruta"), lesson reader on the right; stacks on phone. Candle-chart ticker band as the one bold moment. */
+:root{
+  --bg:#EEF2F5; --surface:#FFFFFF; --ink:#11212E; --muted:#556675; --line:#D3DCE3;
+  --accent:#0A6C8F; --accent-soft:#DCEEF5; --up:#1E8A4F; --down:#C0402C; --gold:#B98500;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1820; --surface:#14232E; --ink:#E4ECF1; --muted:#93A6B4; --line:#24394A;
+  --accent:#4FB6DB; --accent-soft:#16384A; --up:#4CC285; --down:#EF7A63; --gold:#E2B33C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1820; --surface:#14232E; --ink:#E4ECF1; --muted:#93A6B4; --line:#24394A;
+  --accent:#4FB6DB; --accent-soft:#16384A; --up:#4CC285; --down:#EF7A63; --gold:#E2B33C; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+header{padding-block:28px 12px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
+.brand small{display:block;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(30px,5vw,46px);font-weight:800;letter-spacing:-.02em}
+h1 span{color:var(--accent)}
+.prog{min-width:0;flex:1 1 240px;max-width:360px}
+.prog .bar{height:10px;border-radius:6px;background:var(--line);overflow:hidden}
+.prog .bar i{display:block;height:100%;background:var(--up);width:0;transition:width .4s}
+.prog p{margin:4px 0 0;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+canvas#tape{width:100%;height:90px;display:block;margin-block:8px 16px}
+.warn{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--down);padding:12px 16px;border-radius:6px;font-size:14px;color:var(--muted)}
+.warn b{color:var(--ink)}
+nav.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-block:20px}
+nav.tabs button{font:600 15px var(--f-body);padding:9px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+nav.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.grid{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start}
+@media (max-width:820px){.grid{grid-template-columns:1fr}}
+.trail{list-style:none;margin:0;padding:0;display:grid;gap:4px;position:relative}
+.trail button{width:100%;text-align:left;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;padding:10px 12px;border:1px solid transparent;border-radius:8px;background:none;color:var(--ink);cursor:pointer;font:inherit}
+.trail button:hover{background:var(--surface)}
+.trail button[aria-current="true"]{background:var(--surface);border-color:var(--line)}
+.dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:600 13px var(--f-mono);border:2px solid var(--line);background:var(--bg);color:var(--muted)}
+.done .dot{background:var(--up);border-color:var(--up);color:#fff}
+.trail .t{font-weight:700;line-height:1.3}
+.trail .s{display:block;font-size:13px;color:var(--muted);font-weight:400}
+.level{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 12px 2px}
+article.reader{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px clamp(16px,4vw,40px);min-width:0}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+article h2{font-size:clamp(24px,3.4vw,32px);margin-block:6px 16px}
+article h3{font-size:19px;margin-block:26px 6px}
+article p,article li{max-width:66ch}
+.ex{background:var(--accent-soft);border-radius:8px;padding:12px 16px;margin-block:12px;max-width:66ch}
+.ex b{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);display:block}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.quiz{margin-top:30px;border-top:1px dashed var(--line);padding-top:18px}
+.q{margin-block:16px}
+.q p{font-weight:700;margin:0 0 8px}
+.opts{display:grid;gap:6px}
+.opts button{text-align:left;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;cursor:pointer}
+.opts button.ok{border-color:var(--up);background:color-mix(in srgb,var(--up) 14%,var(--surface))}
+.opts button.no{border-color:var(--down);background:color-mix(in srgb,var(--down) 12%,var(--surface))}
+.fb{font-size:14px;color:var(--muted);margin-top:6px}
+.navbtns{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:28px}
+.btn{font:700 15px var(--f-body);padding:10px 18px;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer}
+.btn.ghost{background:none;color:var(--ink)}
+.calcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}
+.card h3{font-size:20px;margin-bottom:4px}
+.card .sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+label{display:grid;gap:3px;font-size:13px;color:var(--muted);margin-bottom:10px}
+input,select{font:16px var(--f-mono);padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%}
+.out{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:6px}
+.out div{display:flex;justify-content:space-between;gap:12px;font-size:14px}
+.out strong{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:16px}
+.big strong{font-size:22px;color:var(--accent)}
+.gloss{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:2px 24px}
+.gloss dt{font-family:var(--f-display);font-weight:700;margin-top:14px}
+.gloss dd{margin:2px 0 0;color:var(--muted);font-size:15px}
+#gfilter{max-width:360px;margin-bottom:6px}
+footer{margin-top:40px;font-size:13px;color:var(--muted)}
+footer a{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){.prog .bar i{transition:none}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+<header>
+  <div class="brand"><small>Vibras Positivas HM · cuaderno de estudio</small><h1>Ruta del <span>Inversor</span></h1></div>
+  <div class="prog"><div class="bar"><i id="pbar"></i></div><p id="ptxt">0 de 9 módulos</p></div>
+</header>
+<canvas id="tape" aria-hidden="true"></canvas>
+<div class="warn"><b>Antes de empezar:</b> esto es para aprender, no es asesoría financiera. Los CFD y el trading con apalancamiento son productos de alto riesgo y la mayoría de cuentas minoristas pierden dinero con ellos. Practique primero en cuenta demo y nunca invierta plata que necesite.</div>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-tab="ruta" id="tab-ruta">La ruta</button>
+  <button role="tab" aria-selected="false" data-tab="calc" id="tab-calc">Calculadoras</button>
+  <button role="tab" aria-selected="false" data-tab="glos" id="tab-glos">Glosario</button>
+</nav>
+
+<section id="v-ruta">
+  <div class="grid">
+    <ol class="trail" id="trail"></ol>
+    <article class="reader" id="reader"></article>
+  </div>
+</section>
+
+<section id="v-calc" hidden>
+  <div class="calcs">
+    <div class="card">
+      <h3>Tamaño de posición</h3>
+      <p class="sub">Cuánto comprar para arriesgar solo un porcentaje de su cuenta.</p>
+      <label>Capital de la cuenta (USD)<input id="c1cap" type="number" value="1000" min="0"></label>
+      <label>Riesgo por operación (%)<input id="c1pct" type="number" value="1" step="0.5" min="0"></label>
+      <label>Precio de entrada<input id="c1in" type="number" value="50" step="0.01"></label>
+      <label>Stop loss<input id="c1sl" type="number" value="48" step="0.01"></label>
+      <div class="out">
+        <div><span>Plata en riesgo</span><strong id="c1risk"></strong></div>
+        <div><span>Riesgo por unidad</span><strong id="c1unit"></strong></div>
+        <div class="big"><span>Unidades a comprar</span><strong id="c1qty"></strong></div>
+        <div><span>Valor de la posición</span><strong id="c1val"></strong></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Margen y apalancamiento</h3>
+      <p class="sub">Cuánta garantía bloquea una posición y cuánto mueve su cuenta.</p>
+      <label>Valor de la posición (USD)<input id="c2val" type="number" value="10000" min="0"></label>
+      <label>Apalancamiento
+        <select id="c2lev"><option value="2">1:2</option><option value="5">1:5</option><option value="10">1:10</option><option value="30" selected>1:30</option><option value="100">1:100</option><option value="500">1:500</option></select></label>
+      <label>Movimiento del precio (%)<input id="c2mv" type="number" value="-2" step="0.5"></label>
+      <div class="out">
+        <div class="big"><span>Margen requerido</span><strong id="c2mar"></strong></div>
+        <div><span>Ganancia o pérdida</span><strong id="c2pl"></strong></div>
+        <div><span>Efecto sobre el margen</span><strong id="c2pct"></strong></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Interés compuesto</h3>
+      <p class="sub">Ahorro mensual invertido a largo plazo, rendimiento supuesto fijo.</p>
+      <label>Aporte mensual (COP)<input id="c3m" type="number" value="200000" step="10000" min="0"></label>
+      <label>Rendimiento anual supuesto (%)<input id="c3r" type="number" value="8" step="0.5"></label>
+      <label>Años<input id="c3y" type="number" value="15" min="1" max="50"></label>
+      <div class="out">
+        <div><span>Total aportado</span><strong id="c3a"></strong></div>
+        <div><span>Ganancia por intereses</span><strong id="c3g"></strong></div>
+        <div class="big"><span>Valor final estimado</span><strong id="c3f"></strong></div>
+      </div>
+      <p class="sub" style="margin-top:10px">Ejemplo ilustrativo. El rendimiento real varía cada año y puede ser negativo.</p>
+    </div>
+  </div>
+</section>
+
+<section id="v-glos" hidden>
+  <input id="gfilter" type="search" placeholder="Buscar término…" aria-label="Buscar en el glosario">
+  <dl class="gloss" id="gloss"></dl>
+</section>
+
+<footer>Temario inspirado en la sección de formación de <a href="https://www.xtb.com/lat/formacion" target="_blank" rel="noopener">XTB Latam</a>; contenido redactado aparte para estudio personal. Su avance se guarda solo en este navegador.</footer>
+</div>
+
+<script>
+const M=[
+{lv:"Principiante",t:"Cómo funciona un mercado",s:"Precio, oferta y demanda",body:`
+<p>Un mercado financiero es un lugar (hoy casi siempre electrónico) donde compradores y vendedores se ponen de acuerdo en un precio. Si hay más gente queriendo comprar que vender, el precio sube; si pasa lo contrario, baja. Es lo mismo que pasa con el precio del pescado en la plaza de Caucasia cuando llega poco o mucho.</p>
+<h3>Precio de compra y de venta</h3>
+<p>Todo activo muestra dos precios: el <b>bid</b> (lo que le pagan si vende) y el <b>ask</b> (lo que paga si compra). La diferencia es el <b>spread</b>, y es un costo que usted asume apenas abre una operación.</p>
+<div class="ex"><b>Ejemplo</b>EUR/USD: bid <span class="num">1.0850</span> · ask <span class="num">1.0852</span>. Spread de 2 pips. Si compra y vende al instante, pierde esos 2 pips.</div>
+<h3>Quién mueve los precios</h3>
+<ul><li>Bancos centrales y gobiernos (tasas de interés, decisiones políticas).</li><li>Fondos e instituciones que mueven montos enormes.</li><li>Empresas que reportan resultados.</li><li>Millones de inversionistas pequeños como usted.</li></ul>
+<h3>Horarios</h3>
+<p>Cada mercado tiene su horario. Forex abre de domingo en la noche a viernes en la tarde casi sin pausa; las bolsas de acciones abren solo en su jornada (la de Nueva York, por ejemplo, en la mañana y tarde de Colombia). Fuera de horario el precio puede abrir con un "salto" o gap.</p>`,
+q:[["Si hay más compradores que vendedores, el precio tiende a…",["Bajar","Subir","Quedarse igual"],1,"Más demanda que oferta empuja el precio hacia arriba."],
+["El spread es…",["Una comisión del gobierno","La diferencia entre precio de compra y de venta","La ganancia del inversionista"],1,"Es el costo implícito entre bid y ask."],
+["Un 'gap' es…",["Un salto de precio entre el cierre y la siguiente apertura","Un tipo de orden","Un indicador técnico"],0,"Ocurre cuando llegan noticias con el mercado cerrado."]]},
+
+{lv:"Principiante",t:"Los instrumentos",s:"Acciones, ETF, forex, materias primas, CFD",body:`
+<h3>Acciones</h3><p>Comprar una acción es comprar un pedacito de una empresa. Gana si la empresa vale más con el tiempo o si reparte dividendos.</p>
+<h3>ETF</h3><p>Un fondo que cotiza en bolsa y agrupa muchas acciones o bonos. Con un solo ETF que replica el S&P 500 usted queda expuesto a 500 empresas grandes de EE. UU. Es la forma más sencilla de diversificar.</p>
+<h3>Forex (divisas)</h3><p>Se negocian pares: EUR/USD, USD/COP. Si compra USD/COP está apostando a que el dólar se fortalece frente al peso.</p>
+<h3>Materias primas e índices</h3><p>Oro, petróleo, café, y también índices como el S&P 500 o el DAX alemán, que miden un grupo de acciones.</p>
+<h3>CFD (contrato por diferencia)</h3><p>No compra el activo; firma un contrato con el broker para ganar o perder la diferencia de precio. Permite ganar si el precio baja (ir "en corto") y usa apalancamiento. Por eso es el instrumento más riesgoso de esta lista.</p>
+<div class="ex"><b>Diferencia clave</b>Acción o ETF real: lo máximo que pierde es lo que puso. CFD apalancado: las pérdidas crecen al ritmo del apalancamiento.</div>`,
+q:[["¿Qué instrumento le da exposición a muchas empresas en una sola compra?",["Un CFD de oro","Un ETF","Un par de divisas"],1,"Un ETF agrupa muchos activos."],
+["Con un CFD usted…",["Es dueño del activo","Gana o pierde la diferencia de precio sin ser dueño","Recibe siempre dividendos"],1,"Es un contrato sobre la variación del precio."],
+["Comprar USD/COP es apostar a que…",["El peso se fortalece","El dólar se fortalece frente al peso","Sube el petróleo"],1,"Compra la primera moneda del par contra la segunda."]]},
+
+{lv:"Principiante",t:"Apalancamiento y margen",s:"La herramienta que más cuentas quiebra",body:`
+<p>El apalancamiento le deja manejar una posición grande con poca plata. Con 1:30, por cada dólar suyo controla 30. Esa plata suya que queda bloqueada como garantía se llama <b>margen</b>.</p>
+<div class="ex"><b>Ejemplo</b>Posición de <span class="num">USD 10.000</span> con 1:30 → margen de <span class="num">USD 333</span>. Si el precio baja 2 %, pierde <span class="num">USD 200</span>: el 60 % de su margen, por un movimiento pequeño.</div>
+<h3>Llamada de margen y cierre forzado</h3>
+<p>Si las pérdidas se comen su garantía, el broker le avisa (llamada de margen) y, si sigue bajando, cierra sus posiciones solo para que la cuenta no quede en negativo.</p>
+<h3>Regla práctica</h3>
+<p>Que una plataforma ofrezca 1:500 no significa que deba usarlo. Mientras aprende, use poco o ningún apalancamiento. Pruebe con la calculadora de margen en la pestaña Calculadoras.</p>`,
+q:[["Con apalancamiento 1:30 y USD 10.000 de posición, el margen es cerca de…",["USD 3.000","USD 333","USD 30"],1,"10.000 ÷ 30 ≈ 333."],
+["El apalancamiento multiplica…",["Solo las ganancias","Ganancias y pérdidas","Solo las comisiones"],1,"Funciona en ambas direcciones."],
+["Una llamada de margen significa que…",["Ganó mucho","Su garantía se está agotando por pérdidas","Le regalan saldo"],1,"Es una alerta antes del cierre forzado."]]},
+
+{lv:"Principiante",t:"Tipos de órdenes",s:"Mercado, límite, stop loss, take profit",body:`
+<h3>Orden de mercado</h3><p>Compra o vende ya, al mejor precio disponible. Rápida, pero en momentos de mucha volatilidad el precio final puede variar (deslizamiento).</p>
+<h3>Orden límite</h3><p>Compra solo si el precio baja a un nivel que usted fija, o vende solo si sube a ese nivel. Puede que nunca se ejecute.</p>
+<h3>Orden stop</h3><p>Se activa cuando el precio rompe un nivel. Útil para entrar cuando el precio confirma un movimiento.</p>
+<h3>Stop loss y take profit</h3><p>El <b>stop loss</b> cierra la operación si va en su contra hasta el punto que usted decidió antes de entrar. El <b>take profit</b> la cierra cuando alcanza su objetivo. Póngalos siempre al abrir, no después.</p>
+<h3>Trailing stop</h3><p>Un stop loss que se va moviendo detrás del precio cuando la operación avanza a su favor, protegiendo ganancia.</p>`,
+q:[["Quiere comprar ya mismo, sin importar centavos. Usa…",["Orden límite","Orden de mercado","Take profit"],1,"La de mercado se ejecuta de inmediato."],
+["¿Cuándo debe fijar el stop loss?",["Cuando ya va perdiendo mucho","Al abrir la operación","Nunca, mejor esperar"],1,"Se decide antes, con cabeza fría."],
+["Un trailing stop…",["Sigue al precio cuando va a su favor","Duplica la posición","Cancela el take profit"],0,"Va asegurando ganancia."]]},
+
+{lv:"Intermedio",t:"Análisis técnico",s:"Velas, tendencias, soportes, indicadores",body:`
+<p>Estudia el gráfico de precios para buscar patrones. Parte de la idea de que el precio ya refleja lo que se sabe y que los comportamientos tienden a repetirse.</p>
+<h3>Velas japonesas</h3><p>Cada vela muestra apertura, cierre, máximo y mínimo de un periodo. Cuerpo verde: cerró más alto de lo que abrió. Rojo: cerró más bajo. Las "mechas" muestran hasta dónde llegó.</p>
+<h3>Tendencia</h3><p>Alcista: máximos y mínimos cada vez más altos. Bajista: cada vez más bajos. Lateral: el precio va y viene en un rango.</p>
+<h3>Soporte y resistencia</h3><p>Soporte: zona donde el precio ha dejado de bajar varias veces. Resistencia: donde ha dejado de subir. Cuando se rompen con fuerza, a veces cambian de papel.</p>
+<h3>Dos indicadores para empezar</h3>
+<ul><li><b>Media móvil:</b> promedio del precio de los últimos N periodos. Suaviza el ruido y muestra la dirección.</li><li><b>RSI:</b> oscila de 0 a 100. Arriba de 70 se suele leer como sobrecompra; abajo de 30, sobreventa. No es señal de compra o venta por sí sola.</li></ul>
+<div class="ex"><b>Ojo</b>Ningún indicador predice el futuro. Sirven para ordenar decisiones, no para adivinar.</div>`,
+q:[["Una tendencia alcista muestra…",["Máximos y mínimos cada vez más altos","Precios iguales","Solo velas rojas"],0,"Es la definición clásica."],
+["Un RSI de 80 se suele leer como…",["Sobreventa","Sobrecompra","Señal segura de venta"],1,"Arriba de 70 es zona de sobrecompra, pero no es señal segura."],
+["El soporte es una zona donde el precio…",["Ha dejado de bajar varias veces","Ha dejado de subir","Nunca ha llegado"],0,"Ahí suele aparecer demanda."]]},
+
+{lv:"Intermedio",t:"Análisis fundamental",s:"Tasas, inflación, resultados",body:`
+<p>Busca el valor real de un activo mirando la economía y las empresas, no el gráfico.</p>
+<h3>Tasas de interés</h3><p>Cuando un banco central sube tasas, su moneda tiende a fortalecerse y las acciones suelen sufrir, porque el crédito se encarece. Las decisiones de la Reserva Federal de EE. UU. y del Banco de la República mueven mucho el USD/COP.</p>
+<h3>Inflación y empleo</h3><p>Los datos de inflación (IPC) y de empleo de EE. UU. salen en fechas fijas y suelen sacudir los mercados. Revise el calendario económico antes de operar.</p>
+<h3>Resultados de empresas</h3><p>Cada trimestre las empresas publican ventas y utilidades. Lo que mueve el precio es la diferencia contra lo que el mercado esperaba, no solo si ganaron o perdieron.</p>
+<h3>Petróleo y Colombia</h3><p>Como Colombia exporta petróleo, cuando el crudo sube suele entrar más dólares al país y el peso tiende a fortalecerse, aunque hay muchos otros factores.</p>`,
+q:[["Si la Reserva Federal sube tasas, el dólar tiende a…",["Debilitarse","Fortalecerse","No cambiar nunca"],1,"Tasas más altas atraen capital a esa moneda."],
+["Lo que más mueve una acción en resultados es…",["Que la empresa exista","La sorpresa frente a lo esperado","El color del logo"],1,"El mercado reacciona a la diferencia con las expectativas."],
+["¿Dónde ve cuándo salen datos de inflación o empleo?",["En el calendario económico","En el RSI","En el spread"],0,"El calendario lista fechas y horas."]]},
+
+{lv:"Intermedio",t:"Gestión del riesgo",s:"La parte que mantiene viva la cuenta",body:`
+<h3>Regla del 1 al 2 %</h3><p>No arriesgue más del 1 o 2 % de la cuenta en una sola operación. Con USD 1.000, eso son USD 10 a 20 por operación. Así diez pérdidas seguidas no lo sacan del juego.</p>
+<h3>Relación riesgo/beneficio</h3><p>Si arriesga 10 para buscar 20, su relación es 1:2. Con 1:2 puede equivocarse más de la mitad de las veces y aun así no perder plata en el largo plazo.</p>
+<div class="ex"><b>Cálculo</b>10 operaciones, 4 ganadas a +20 y 6 perdidas a −10: <span class="num">80 − 60 = +20</span>.</div>
+<h3>Tamaño de posición</h3><p>Primero decide dónde va el stop, después calcula cuántas unidades comprar para que esa distancia equivalga a su % de riesgo. Use la calculadora de tamaño de posición.</p>
+<h3>Diversificar</h3><p>No ponga todo en un solo activo ni en activos que se mueven igual (por ejemplo, varias petroleras a la vez).</p>`,
+q:[["Con una cuenta de USD 2.000 y regla del 1 %, arriesga por operación…",["USD 200","USD 20","USD 2"],1,"1 % de 2.000 = 20."],
+["Relación 1:2 significa…",["Arriesgar 1 para buscar 2","Ganar siempre","Dos operaciones al día"],0,"Por cada unidad en riesgo busca dos de ganancia."],
+["¿Qué se decide primero?",["La cantidad a comprar","Dónde va el stop loss","El take profit"],1,"El stop define el tamaño de la posición."]]},
+
+{lv:"Avanzado",t:"Psicología y plan",s:"Disciplina, diario y cuenta demo",body:`
+<p>La mayoría de errores no son de conocimiento sino de emociones.</p>
+<h3>Trampas comunes</h3>
+<ul><li><b>FOMO:</b> entrar tarde porque "todos están ganando".</li><li><b>Revancha:</b> abrir otra operación más grande para recuperar una pérdida.</li><li><b>Mover el stop:</b> alejarlo cuando el precio se acerca, esperando que se devuelva.</li><li><b>Exceso de confianza:</b> subir el tamaño después de varias ganancias.</li></ul>
+<h3>Su plan escrito</h3><p>Antes de operar con plata real escriba: qué mercados opera, en qué horario, qué condiciones lo hacen entrar, dónde pone stop y objetivo, y cuánto arriesga. Si una operación no cumple el plan, no se hace.</p>
+<h3>Diario de operaciones</h3><p>Anote cada operación: fecha, activo, razón de entrada, resultado y cómo se sintió. Revíselo cada semana.</p>
+<h3>Cuenta demo</h3><p>Opere en demo al menos uno o dos meses siguiendo su plan. Si no es rentable en demo, con plata real tampoco lo será.</p>`,
+q:[["Abrir una operación más grande para recuperar una pérdida es…",["Buena estrategia","Operar por revancha","Diversificar"],1,"Es una de las formas más rápidas de quebrar la cuenta."],
+["Si una operación no cumple su plan, usted…",["La hace igual","No la hace","Duplica el tamaño"],1,"El plan es la regla."],
+["¿Para qué sirve la cuenta demo?",["Para probar el plan sin arriesgar plata","Para ganar plata real","No sirve"],0,"Practica sin riesgo."]]},
+
+{lv:"Avanzado",t:"Invertir a largo plazo",s:"Interés compuesto, costos e impuestos",body:`
+<p>Trading es comprar y vender seguido. Invertir es comprar buenos activos y mantenerlos años. Para la mayoría de personas, lo segundo da mejores resultados con menos estrés.</p>
+<h3>Interés compuesto</h3><p>Las ganancias generan nuevas ganancias. El tiempo pesa más que el monto: empezar temprano con poco suele superar a empezar tarde con mucho. Pruebe la calculadora de interés compuesto.</p>
+<h3>Aportes constantes</h3><p>Invertir la misma cantidad cada mes, sin importar si el mercado sube o baja, reduce el riesgo de comprar todo en un mal momento.</p>
+<h3>Costos</h3><p>Revise comisiones, cambio de divisa, custodia e inactividad. Un 1 % anual de costos parece poco, pero en 20 años se come una parte grande del resultado.</p>
+<h3>Impuestos en Colombia</h3><p>Las inversiones en el exterior y sus rendimientos se deben reportar en la declaración de renta ante la DIAN. Las reglas cambian, así que consulte con un contador antes de declarar.</p>`,
+q:[["En el interés compuesto, lo que más pesa es…",["El tiempo","El color de la plataforma","Operar todos los días"],0,"Más años, más efecto de crecimiento."],
+["Aportar lo mismo cada mes ayuda a…",["Adivinar el mejor día","No comprar todo en un mal momento","Evitar impuestos"],1,"Reparte el precio de compra en el tiempo."],
+["Las inversiones en el exterior de un colombiano…",["No se declaran","Se reportan en la declaración de renta","Solo se declaran si pierde"],1,"Consulte reglas vigentes con un contador."]]}
+];
+
+const G=[["Acción","Parte de la propiedad de una empresa."],["Apalancamiento","Manejar una posición mayor que su plata usando crédito del broker."],["Ask","Precio al que usted compra."],["Bid","Precio al que usted vende."],["Broker","Intermediario que le da acceso al mercado."],["CFD","Contrato por diferencia; gana o pierde la variación de precio sin poseer el activo."],["Corto (short)","Operación que gana si el precio baja."],["Cuenta demo","Cuenta con dinero ficticio para practicar."],["Deslizamiento","Diferencia entre el precio pedido y el ejecutado."],["Dividendo","Parte de las utilidades que la empresa reparte a sus accionistas."],["ETF","Fondo que cotiza en bolsa y agrupa varios activos."],["Gap","Salto de precio entre un cierre y la siguiente apertura."],["Índice","Medida del valor de un grupo de acciones, como el S&P 500."],["Largo (long)","Operación que gana si el precio sube."],["Llamada de margen","Aviso de que su garantía se está agotando."],["Margen","Plata bloqueada como garantía de una posición apalancada."],["Media móvil","Promedio del precio de los últimos N periodos."],["Pip","Unidad mínima de variación en forex, normalmente 0,0001."],["Resistencia","Zona donde el precio ha dejado de subir varias veces."],["RSI","Indicador de 0 a 100 que mide fuerza del movimiento."],["Soporte","Zona donde el precio ha dejado de bajar varias veces."],["Spread","Diferencia entre bid y ask; un costo de cada operación."],["Stop loss","Orden que cierra la operación al llegar a la pérdida máxima fijada."],["Swap","Costo o pago por mantener una posición apalancada de un día a otro."],["Take profit","Orden que cierra la operación al llegar al objetivo de ganancia."],["Volatilidad","Qué tanto y qué tan rápido se mueve un precio."]];
+
+let st={cur:0,done:{},ans:{}};
+try{const s=JSON.parse(localStorage.getItem("ruta-inv")||"null");if(s)st=Object.assign(st,s)}catch(e){}
+const save=()=>{try{localStorage.setItem("ruta-inv",JSON.stringify(st))}catch(e){}};
+const $=id=>document.getElementById(id);
+
+function renderTrail(){
+  let h="",lv="";
+  M.forEach((m,i)=>{
+    if(m.lv!==lv){lv=m.lv;h+=`<li class="level">${lv}</li>`}
+    h+=`<li class="${st.done[i]?"done":""}"><button data-i="${i}" aria-current="${i===st.cur}"><span class="dot">${st.done[i]?"✓":String(i+1).padStart(2,"0")}</span><span class="t">${m.t}<span class="s">${m.s}</span></span></button></li>`;
+  });
+  $("trail").innerHTML=h;
+  const n=Object.keys(st.done).length;
+  $("pbar").style.width=(n/M.length*100)+"%";
+  $("ptxt").textContent=`${n} de ${M.length} módulos aprobados`;
+}
+function renderLesson(){
+  const i=st.cur,m=M[i],a=st.ans[i]||{};
+  let q=m.q.map((x,qi)=>{
+    const picked=a[qi];
+    const opts=x[1].map((o,oi)=>{
+      let c="";if(picked!==undefined){if(oi===x[2])c="ok";else if(oi===picked)c="no"}
+      return `<button class="${c}" data-q="${qi}" data-o="${oi}" ${picked!==undefined?"disabled":""}>${o}</button>`}).join("");
+    const fb=picked!==undefined?`<div class="fb">${picked===x[2]?"Correcto.":"No era esa."} ${x[3]}</div>`:"";
+    return `<div class="q"><p>${qi+1}. ${x[0]}</p><div class="opts">${opts}</div>${fb}</div>`}).join("");
+  const allAns=Object.keys(a).length===m.q.length;
+  const score=m.q.filter((x,qi)=>a[qi]===x[2]).length;
+  let res="";
+  if(allAns){res=`<p><b>${score} de ${m.q.length} correctas.</b> ${score>=2?"Módulo aprobado.":"Repase la lección y vuelva a intentarlo."}</p>${score<2?'<button class="btn ghost" id="retry">Repetir el quiz</button>':""}`}
+  $("reader").innerHTML=`<div class="eyebrow">Módulo ${i+1} de ${M.length} · ${m.lv}</div><h2>${m.t}</h2>${m.body}
+  <div class="quiz"><h3 style="margin-top:0">Compruebe lo aprendido</h3>${q}${res}</div>
+  <div class="navbtns"><button class="btn ghost" id="prev" ${i===0?"disabled":""}>← Anterior</button><button class="btn" id="next" ${i===M.length-1?"disabled":""}>Siguiente →</button></div>`;
+}
+$("trail").addEventListener("click",e=>{const b=e.target.closest("button[data-i]");if(!b)return;st.cur=+b.dataset.i;save();renderTrail();renderLesson();$("reader").scrollIntoView({behavior:"smooth",block:"start"})});
+$("reader").addEventListener("click",e=>{
+  const i=st.cur;
+  if(e.target.id==="prev"||e.target.id==="next"){st.cur+=e.target.id==="next"?1:-1;save();renderTrail();renderLesson();$("reader").scrollIntoView({behavior:"smooth",block:"start"});return}
+  if(e.target.id==="retry"){delete st.ans[i];save();renderLesson();return}
+  const b=e.target.closest("button[data-q]");if(!b)return;
+  st.ans[i]=st.ans[i]||{};st.ans[i][b.dataset.q]=+b.dataset.o;
+  const m=M[i],a=st.ans[i];
+  if(Object.keys(a).length===m.q.length&&m.q.filter((x,qi)=>a[qi]===x[2]).length>=2)st.done[i]=1;
+  save();renderTrail();renderLesson();
+});
+
+document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  ["ruta","calc","glos"].forEach(t=>$("v-"+t).hidden=t!==b.dataset.tab);
+}));
+
+const usd=v=>isFinite(v)?"USD "+v.toLocaleString("es-CO",{maximumFractionDigits:2}):"—";
+const cop=v=>isFinite(v)?"$ "+Math.round(v).toLocaleString("es-CO"):"—";
+function calc(){
+  const cap=+$("c1cap").value,pct=+$("c1pct").value,inn=+$("c1in").value,sl=+$("c1sl").value;
+  const risk=cap*pct/100,unit=Math.abs(inn-sl),qty=unit>0?Math.floor(risk/unit*100)/100:NaN;
+  $("c1risk").textContent=usd(risk);$("c1unit").textContent=unit>0?usd(unit):"—";
+  $("c1qty").textContent=isFinite(qty)?qty.toLocaleString("es-CO"):"—";$("c1val").textContent=usd(qty*inn);
+  const val=+$("c2val").value,lev=+$("c2lev").value,mv=+$("c2mv").value;
+  const mar=val/lev,pl=val*mv/100;
+  $("c2mar").textContent=usd(mar);
+  $("c2pl").textContent=usd(pl);$("c2pl").style.color=pl<0?"var(--down)":"var(--up)";
+  $("c2pct").textContent=mar>0?(pl/mar*100).toFixed(0)+" %":"—";$("c2pct").style.color=pl<0?"var(--down)":"var(--up)";
+  const m=+$("c3m").value,r=+$("c3r").value/100/12,n=+$("c3y").value*12;
+  const f=r===0?m*n:m*((Math.pow(1+r,n)-1)/r);
+  $("c3a").textContent=cop(m*n);$("c3g").textContent=cop(f-m*n);$("c3f").textContent=cop(f);
+}
+document.querySelectorAll("#v-calc input,#v-calc select").forEach(x=>x.addEventListener("input",calc));
+
+function renderGloss(f=""){
+  f=f.toLowerCase();
+  $("gloss").innerHTML=G.filter(g=>(g[0]+g[1]).toLowerCase().includes(f)).map(g=>`<div><dt>${g[0]}</dt><dd>${g[1]}</dd></div>`).join("")||"<p>No hay términos con esa palabra.</p>";
+}
+$("gfilter").addEventListener("input",e=>renderGloss(e.target.value));
+
+function tape(){
+  const c=$("tape"),dpr=window.devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;
+  c.width=w*dpr;c.height=h*dpr;const x=c.getContext("2d");x.scale(dpr,dpr);
+  const cs=getComputedStyle(document.documentElement);
+  const up=cs.getPropertyValue("--up").trim(),dn=cs.getPropertyValue("--down").trim(),ln=cs.getPropertyValue("--line").trim();
+  x.strokeStyle=ln;x.lineWidth=1;for(let y=h/4;y<h;y+=h/4){x.beginPath();x.moveTo(0,y);x.lineTo(w,y);x.stroke()}
+  let seed=7,p=50;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};
+  const n=Math.floor(w/11),bars=[];
+  for(let i=0;i<n;i++){const o=p,cl=o+(rnd()-.46)*3.2,hi=Math.max(o,cl)+rnd()*1.6,lo=Math.min(o,cl)-rnd()*1.6;bars.push([o,hi,lo,cl]);p=cl}
+  const mx=Math.max(...bars.map(b=>b[1])),mn=Math.min(...bars.map(b=>b[2]));
+  const Y=v=>6+(mx-v)/(mx-mn)*(h-12);
+  bars.forEach((b,i)=>{const cx=i*11+5,col=b[3]>=b[0]?up:dn;x.strokeStyle=col;x.fillStyle=col;
+    x.beginPath();x.moveTo(cx+.5,Y(b[1]));x.lineTo(cx+.5,Y(b[2]));x.stroke();
+    const t=Y(Math.max(b[0],b[3])),bt=Y(Math.min(b[0],b[3]));x.fillRect(cx-3,t,7,Math.max(1.5,bt-t))});
+}
+renderTrail();renderLesson();calc();renderGloss();tape();
+let rt;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(tape,150)});
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",tape)}catch(e){}
+</script>
+<script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>
